@@ -1,6 +1,17 @@
 ## Refer to
 - https://sirishagopigiri-692.medium.com/deploying-envoy-filter-on-istio-ce2d2573b981
 
+## Prepare the wasm
+```
+# Building WASM binary
+$ git clone https://github.com/tetratelabs/proxy-wasm-go-sdk.git
+$ cd proxy-wasm-go-sdk
+$ cd examples/http_headers
+$ tinygo build -o ./main.go.wasm -scheduler=none -target=wasi ./main.go
+$ ls
+README.md  envoy.yaml  main.go  main.go.wasm  main_test.go
+```
+
 ## Configure
 
 ```
