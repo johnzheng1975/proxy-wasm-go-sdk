@@ -10,6 +10,8 @@ $ cd examples/http_headers
 $ tinygo build -o ./main.go.wasm -scheduler=none -target=wasi ./main.go
 $ ls
 README.md  envoy.yaml  main.go  main.go.wasm  main_test.go
+
+# kubectl create configmap http-filter --from-file=http-filter.wasm=main.go.wasm
 ```
 
 ## Configure
