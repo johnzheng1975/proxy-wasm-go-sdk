@@ -36,7 +36,7 @@ spec:
                   "@type": type.googleapis.com/google.protobuf.StringValue
                   value: |
                     {
-                      "name": "vm configuration john"
+                      "name": "vm configuration"
                     }
                 code:
                   local:
