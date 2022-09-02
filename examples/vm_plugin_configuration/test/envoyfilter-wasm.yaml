@@ -26,8 +26,9 @@ spec:
           type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
           value:
             config:
-              "@type": type.googleapis.com/google.protobuf.StringValue
-              value: '{"name": "plugin configuration"}'
+              configuration:
+                "@type": type.googleapis.com/google.protobuf.StringValue
+                value: '{"name": "plugin configuration"}'
               vm_config:
                 configuration:
                   "@type": type.googleapis.com/google.protobuf.StringValue
