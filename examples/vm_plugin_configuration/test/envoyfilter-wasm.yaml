@@ -28,11 +28,11 @@ spec:
             config:
               configuration:
                 "@type": type.googleapis.com/google.protobuf.StringValue
-                value: '{"name": "plugin configuration"}'
+                value: '{"name": "John", "range": "whole"}'
               vm_config:
                 configuration:
                   "@type": type.googleapis.com/google.protobuf.StringValue
-                  value: '{"name": "vm configuration"}'
+                  value: '{"name": "Anna", "range": "vm"}'
                 code:
                   local:
                     filename: /var/local/wasm/http-filter.wasm
