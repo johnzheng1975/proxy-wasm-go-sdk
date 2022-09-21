@@ -1,14 +1,20 @@
-## helloworld
+## http_headers
 
-this example periodically logs the current time in nanoseconds
+this example handles http request/response headers events and log all headers.
 
 ```
-wasm log helloworld: OnPluginStart from Go!
-wasm log helloworld: OnPluginStart from Go!
-wasm log helloworld: OnTick on 1, it's 1601543078943978000
-wasm log helloworld: OnTick on 1, it's 1601543078947916000
-wasm log helloworld: OnTick on 1, it's 1601543078951979000
-wasm log helloworld: OnTick on 1, it's 1601543079947462000
-wasm log helloworld: OnTick on 1, it's 1601543079951503000
-wasm log helloworld: OnTick on 1, it's 1601543079955484000
+wasm log: request header --> :authority: localhost:18000
+wasm log: request header --> :path: /uuid
+wasm log: request header --> :method: GET
+wasm log: request header --> user-agent: curl/7.68.0
+wasm log: request header --> accept: */*
+wasm log: request header --> x-forwarded-proto: http
+wasm log: request header --> x-request-id: 5692b633-fd9c-4700-b4dd-7a58e2853eb4
+wasm log: response header <-- :status: 200
+wasm log: response header <-- content-length: 13
+wasm log: response header <-- content-type: text/plain
+wasm log: response header <-- date: Thu, 01 Oct 2020 09:10:09 GMT
+wasm log: response header <-- server: envoy
+wasm log: response header <-- x-envoy-upstream-service-time: 0
+wasm log: 2 finished
 ```

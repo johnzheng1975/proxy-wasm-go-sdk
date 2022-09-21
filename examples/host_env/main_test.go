@@ -8,6 +8,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -16,33 +17,66 @@ import (
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
 )
 
-func TestHelloWorld_OnTick(t *testing.T) {
+func TestHttpHeaders_OnHttpRequestHeaders(t *testing.T) {
 	opt := proxytest.NewEmulatorOption().WithVMContext(&vmContext{})
 	host, reset := proxytest.NewHostEmulator(opt)
 	defer reset()
 
-	// Call OnPluginStart.
-	require.Equal(t, types.OnPluginStartStatusOK, host.StartPlugin())
-	require.Equal(t, tickMilliseconds, host.GetTickPeriod())
+	// Initialize http context.
+	id := host.InitializeHttpContext()
 
-	// Call OnTick.
-	host.Tick()
+	// Call OnHttpResponseHeaders.
+	hs := [][2]string{{"key1", "value1"}, {"key2", "value2"}}
+	action := host.CallOnRequestHeaders(id,
+		hs, false)
+	require.Equal(t, types.ActionContinue, action)
+
+	// Check headers.
+	resultHeaders := host.GetCurrentRequestHeaders(id)
+	var found bool
+	for _, val := range resultHeaders {
+		if val[0] == "test" {
+			require.Equal(t, "best", val[1])
+			found = true
+		}
+	}
+	require.True(t, found)
+
+	// Call OnHttpStreamDone.
+	host.CompleteHttpContext(id)
 
 	// Check Envoy logs.
 	logs := host.GetInfoLogs()
-	require.Contains(t, logs, "OnTick called")
+	require.Contains(t, logs, fmt.Sprintf("%d finished", id))
+	require.Contains(t, logs, "request header --> key2: value2")
+	require.Contains(t, logs, "request header --> key1: value1")
 }
 
-func TestHelloWorld_OnPluginStart(t *testing.T) {
+func TestHttpHeaders_OnHttpResponseHeaders(t *testing.T) {
 	opt := proxytest.NewEmulatorOption().WithVMContext(&vmContext{})
 	host, reset := proxytest.NewHostEmulator(opt)
 	defer reset()
 
-	// Call OnPluginStart.
-	require.Equal(t, types.OnPluginStartStatusOK, host.StartPlugin())
+	// Initialize http context.
+	id := host.InitializeHttpContext()
+
+	// Call OnHttpResponseHeaders.
+	hs := [][2]string{{"key1", "value1"}, {"key2", "value2"}}
+	action := host.CallOnResponseHeaders(id, hs, false)
+	require.Equal(t, types.ActionContinue, action)
+
+	// Call OnHttpStreamDone.
+	host.CompleteHttpContext(id)
+
+	resHeaders := host.GetCurrentResponseHeaders(id)
+	require.Equal(t, "key1", resHeaders[0][0])
+	require.Equal(t, "value1", resHeaders[0][1])
+	require.Equal(t, "key2", resHeaders[1][0])
+	require.Equal(t, "value2", resHeaders[1][1])
 
 	// Check Envoy logs.
 	logs := host.GetInfoLogs()
-	require.Contains(t, logs, "OnPluginStart from Go!")
-	require.Equal(t, tickMilliseconds, host.GetTickPeriod())
+	require.Contains(t, logs, fmt.Sprintf("%d finished", id))
+	require.Contains(t, logs, "response header <-- key2: value2")
+	require.Contains(t, logs, "response header <-- key1: value1")
 }

@@ -1,4 +1,4 @@
-module github.com/tetratelabs/proxy-wasm-go-sdk/examples/helloworld
+module github.com/tetratelabs/proxy-wasm-go-sdk/examples/http_headers
 
 go 1.18
 

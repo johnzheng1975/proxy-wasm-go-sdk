@@ -15,14 +15,9 @@
 package main
 
 import (
-	"math/rand"
-	"time"
-
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm"
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
 )
-
-const tickMilliseconds uint32 = 1000
 
 func main() {
 	proxywasm.SetVMContext(&vmContext{})
@@ -36,34 +31,63 @@ type vmContext struct {
 
 // Override types.DefaultVMContext.
 func (*vmContext) NewPluginContext(contextID uint32) types.PluginContext {
-	return &helloWorld{}
+	return &pluginContext{}
 }
 
-type helloWorld struct {
+type pluginContext struct {
 	// Embed the default plugin context here,
 	// so that we don't need to reimplement all the methods.
 	types.DefaultPluginContext
+}
+
+ 
+ 
+
+
+// Override types.DefaultPluginContext.
+func (*pluginContext) NewHttpContext(contextID uint32) types.HttpContext {
+	return &httpHeaders{contextID: contextID}
+}
+
+type httpHeaders struct {
+	// Embed the default http context here,
+	// so that we don't need to reimplement all the methods.
+	types.DefaultHttpContext
 	contextID uint32
 }
 
-// Override types.DefaultPluginContext.
-func (ctx *helloWorld) OnPluginStart(pluginConfigurationSize int) types.OnPluginStartStatus {
-	rand.Seed(time.Now().UnixNano())
-
-	proxywasm.LogInfo("OnPluginStart from Go!")
-	if err := proxywasm.SetTickPeriodMilliSeconds(tickMilliseconds); err != nil {
-		proxywasm.LogCriticalf("failed to set tick period: %v", err)
+// Override types.DefaultHttpContext.
+func (ctx *httpHeaders) OnHttpRequestHeaders(numHeaders int, endOfStream bool) types.Action {
+	err := proxywasm.ReplaceHttpRequestHeader("test", "best")
+	if err != nil {
+		proxywasm.LogCritical("failed to set request header: test")
 	}
 
-	return types.OnPluginStartStatusOK
+	hs, err := proxywasm.GetHttpRequestHeaders()
+	if err != nil {
+		proxywasm.LogCriticalf("failed to get request headers: %v", err)
+	}
+
+	for _, h := range hs {
+		proxywasm.LogInfof("request header --> %s: %s", h[0], h[1])
+	}
+	return types.ActionContinue
 }
 
-// Override types.DefaultPluginContext.
-func (ctx *helloWorld) OnTick() {
-	t := time.Now().UnixNano()
-	proxywasm.LogInfof("It's %d: random value: %d", t, rand.Uint64())
-	proxywasm.LogInfof("OnTick called")
+// Override types.DefaultHttpContext.
+func (ctx *httpHeaders) OnHttpResponseHeaders(numHeaders int, endOfStream bool) types.Action {
+	hs, err := proxywasm.GetHttpResponseHeaders()
+	if err != nil {
+		proxywasm.LogCriticalf("failed to get response headers: %v", err)
+	}
+
+	for _, h := range hs {
+		proxywasm.LogInfof("response header <-- %s: %s", h[0], h[1])
+	}
+	return types.ActionContinue
 }
 
-// Override types.DefaultPluginContext.
-func (*helloWorld) NewHttpContext(uint32) types.HttpContext { return &types.DefaultHttpContext{} }
+// Override types.DefaultHttpContext.
+func (ctx *httpHeaders) OnHttpStreamDone() {
+	proxywasm.LogInfof("%d finished", ctx.contextID)
+}
