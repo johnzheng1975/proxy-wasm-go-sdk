@@ -17,6 +17,7 @@ package main
 import (
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm"
 	"github.com/tetratelabs/proxy-wasm-go-sdk/proxywasm/types"
+        "os"
 )
 
 func main() {
@@ -40,8 +41,6 @@ type pluginContext struct {
 	types.DefaultPluginContext
 }
 
- 
- 
 
 
 // Override types.DefaultPluginContext.
@@ -63,7 +62,7 @@ func (ctx *httpHeaders) OnHttpRequestHeaders(numHeaders int, endOfStream bool) t
 		proxywasm.LogCritical("failed to set request header: test")
 	}
 
-	myvar := os.Getenv("HELLO_1")
+	myvar := os.Getenv("GITHUB_USER")
 	proxywasm.LogInfof("hello variable: %s",myvar)
 
 	hs, err := proxywasm.GetHttpRequestHeaders()

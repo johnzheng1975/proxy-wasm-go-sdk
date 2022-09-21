@@ -34,9 +34,9 @@ static_resources:
                             runtime: "envoy.wasm.runtime.v8"
                             code:
                               local:
-                                filename: "./examples/http_headers/main.wasm"
+                                filename: "./main.wasm"
                             environment_variables:
-                                host_env_keys: ["HELLO_1", "VAR_2"]                                                  
+                                host_env_keys: ["HELLO_1", "VAR_2", "GITHUB_USER"]                                                  
                   - name: envoy.filters.http.router
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
