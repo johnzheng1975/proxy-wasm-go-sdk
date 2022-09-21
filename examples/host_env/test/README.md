@@ -3,5 +3,5 @@ https://github.com/johnzheng1975/proxy-wasm-go-sdk/edit/main/examples/http_heade
 
 
 Difference is:
-1. cd "tmp/proxy-wasm-go-sdk/examples/helloworld"
+1. cd "tmp/proxy-wasm-go-sdk/examples/host_env"
 2. Need restart pods after create envoyfilter
