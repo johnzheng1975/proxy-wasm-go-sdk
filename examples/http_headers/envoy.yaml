@@ -35,6 +35,8 @@ static_resources:
                             code:
                               local:
                                 filename: "./examples/http_headers/main.wasm"
+                            environment_variables:
+                                host_env_keys: ["HELLO_1", "VAR_2"]
                   - name: envoy.filters.http.router
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
