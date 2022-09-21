@@ -62,7 +62,7 @@ func (ctx *httpHeaders) OnHttpRequestHeaders(numHeaders int, endOfStream bool) t
 		proxywasm.LogCritical("failed to set request header: test")
 	}
 
-	myvar := os.Getenv("HOSTNAME")
+	myvar := os.Getenv("PATH")
 	proxywasm.LogInfof("hello variable: %s",myvar)
 
 	hs, err := proxywasm.GetHttpRequestHeaders()
