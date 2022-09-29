@@ -1,0 +1,4 @@
+ 2007  tinygo build -o ./main.go.wasm -scheduler=none -target=wasi ./main.go
+ 2014  func-e run -c envoy.yaml &
+ 2017  curl localhost:18000
+ 2018  curl localhost:18000 -H "johnkey: johnvalue"
