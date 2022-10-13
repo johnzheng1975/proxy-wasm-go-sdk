@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: httpbin
-  url: oci://johnzheng/wasmws:v3
+  url: oci://johnzheng/wasmws:v5
   pluginConfig:
     header_1: "some_value_1"
     header_2: "another_value"

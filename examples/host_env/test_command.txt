@@ -1,0 +1,38 @@
+ 2019  tinygo build -o main.wasm -scheduler=none -target=wasi main.go
+ 2020  ls -al
+
+ 2022  docker login
+ 2024  docker build -t johnzheng/wasmws:v5 .
+ 2025  docker push johnzheng/wasmws:v5
+ 2029  vi wasmplug.yaml 
+```
+FROM scratch
+COPY main.wasm ./plugin.wasm
+```
+
+ 2030  k apply -f wasmplug.yaml 
+```
+kind: WasmPlugin
+metadata:
+  name: wasm-example
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: httpbin
+  url: oci://johnzheng/wasmws:v5
+  pluginConfig:
+    header_1: "some_value_1"
+    header_2: "another_value"
+  vmConfig:
+    env:
+    - name: PATH
+      valueFrom: HOST
+
+```
+ 2031  k exec -ti nginx -- curl httpbin:8000/status/200  -H "xxxx:yyyy"
+
+ 2034  k logs httpbin-5dcc45899f-ffhjb -c istio-proxy
+```
+2022-10-13T06:38:08.902435Z	info	envoy wasm	wasm log default.wasm-example: hello variable: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+```
